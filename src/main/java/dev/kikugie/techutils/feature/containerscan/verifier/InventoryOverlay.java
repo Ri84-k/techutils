@@ -51,10 +51,6 @@ public class InventoryOverlay {
 	private static InventoryOverlay instance = null;
 	@Nullable
 	private static BlockPos lastClickedPos = null;
-	private final int MISSING_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_MISSING.getIntegerValue();
-	private final int WRONG_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_WRONG_BLOCK.getIntegerValue();
-	private final int MISMATCHED_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_WRONG_STATE.getIntegerValue();
-	private final int EXTRA_COLOR = Configs.Colors.SCHEMATIC_OVERLAY_COLOR_EXTRA.getIntegerValue();
 	private final LinkedStorageEntry entry;
 
 	public InventoryOverlay(LinkedStorageEntry entry) {
@@ -177,31 +173,45 @@ public class InventoryOverlay {
 			schematicStack = ItemStack.EMPTY;
 		}
 
+		boolean useLitematicaColors = LitematicConfigs.USE_LITEMATICA_CONTAINER_COLORS.getBooleanValue();
+		int missingColor = useLitematicaColors
+			? Configs.Colors.SCHEMATIC_OVERLAY_COLOR_MISSING.getIntegerValue()
+			: LitematicConfigs.CONTAINER_COLOR_MISSING.getIntegerValue();
+		int wrongColor = useLitematicaColors
+			? Configs.Colors.SCHEMATIC_OVERLAY_COLOR_WRONG_BLOCK.getIntegerValue()
+			: LitematicConfigs.CONTAINER_COLOR_WRONG.getIntegerValue();
+		int mismatchedColor = useLitematicaColors
+			? Configs.Colors.SCHEMATIC_OVERLAY_COLOR_WRONG_STATE.getIntegerValue()
+			: LitematicConfigs.CONTAINER_COLOR_MISMATCHED.getIntegerValue();
+		int extraColor = useLitematicaColors
+			? Configs.Colors.SCHEMATIC_OVERLAY_COLOR_EXTRA.getIntegerValue()
+			: LitematicConfigs.CONTAINER_COLOR_EXTRA.getIntegerValue();
+
 		int color = 0;
 		boolean shouldRenderItemAsTransparent = false;
 		if (ItemPredicateUtils.getPredicate(schematicStack) instanceof ItemPredicate predicate) {
 			if (stack.isEmpty()) {
-				color = this.MISSING_COLOR;
+				color = missingColor;
 				stack = ItemPredicateUtils.getPlaceholder(schematicStack) instanceof ItemStack placeholder
 					? placeholder
 					: schematicStack;
 				shouldRenderItemAsTransparent = true;
 			} else if (!predicate.test(stack)) {
-				color = this.WRONG_COLOR;
+				color = wrongColor;
 			}
 		} else if (stack.isEmpty() && !schematicStack.isEmpty()) {
-			color = this.MISSING_COLOR;
+			color = missingColor;
 			stack = schematicStack;
 			shouldRenderItemAsTransparent = true;
 		} else if (!stack.isEmpty() && schematicStack.isEmpty()) {
-			color = this.EXTRA_COLOR;
+			color = extraColor;
 		} else if (!stack.getItem().equals(schematicStack.getItem())) {
-			color = this.WRONG_COLOR;
+			color = wrongColor;
 		} else if (stack.getCount() != schematicStack.getCount()) {
-			color = this.MISMATCHED_COLOR;
+			color = mismatchedColor;
 		} else if (LitematicConfigs.VERIFY_ITEM_COMPONENTS.getBooleanValue()
 			&& !Objects.equals(schematicStack.getComponents(), stack.getComponents())) {
-			color = WRONG_COLOR;
+			color = wrongColor;
 		}
 
 		if (color != 0)

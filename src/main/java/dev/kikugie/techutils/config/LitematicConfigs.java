@@ -11,7 +11,7 @@ public class LitematicConfigs extends Configs.BaseConfigs {
 		"Cycle through selected placement's mirroring options");
 	public static final ConfigBooleanHotkeyed INVENTORY_SCREEN_OVERLAY = new ConfigBooleanHotkeyed("inventoryScreenOverlay", true, "", KeybindSettings.GUI, """
 		Show layout of the container according to the litematic placement.
-		Item colors match your placement block colors. By default its:
+		Colors use TechUtils' container color settings, or Litematica colors when enabled:
 		- Light blue: missing item;
 		- Orange: mismatched amount or nbt data;
 		- Magenta: extra item that shouldn't be present;
@@ -30,11 +30,27 @@ public class LitematicConfigs extends Configs.BaseConfigs {
 	public static final ConfigBooleanHotkeyed FORCE_SCHEMATIC_ITEM_OVERLAY = new ConfigBooleanHotkeyed("forceSchematicItemOverlay", false, "", KeybindSettings.GUI, """
 		Overwrite each slot in the opened container to show the schematic item instead of the real one.""");
 
+	public static final ConfigBoolean USE_LITEMATICA_CONTAINER_COLORS = new ConfigBoolean("useLitematicaContainerColors", false,
+		"Use Litematica's block overlay colors for container highlights instead of the independent colors below.");
+	public static final ConfigColor CONTAINER_COLOR_MISSING = new ConfigColor("containerColorMissing", "#8000FFFF",
+		"Container slot background for a missing item. Includes opacity.");
+	public static final ConfigColor CONTAINER_COLOR_WRONG = new ConfigColor("containerColorWrongItem", "#80FF0000",
+		"Container slot background for a wrong item or failed item predicate/component check. Includes opacity.");
+	public static final ConfigColor CONTAINER_COLOR_MISMATCHED = new ConfigColor("containerColorWrongAmount", "#80FF8000",
+		"Container slot background for an incorrect item quantity. Includes opacity.");
+	public static final ConfigColor CONTAINER_COLOR_EXTRA = new ConfigColor("containerColorExtra", "#80FF00FF",
+		"Container slot background for an item in a slot that should be empty. Includes opacity.");
+
 	public LitematicConfigs() {
 		super(ImmutableList.of(
 			ROTATE_PLACEMENT,
 			MIRROR_PLACEMENT,
 			INVENTORY_SCREEN_OVERLAY,
+			USE_LITEMATICA_CONTAINER_COLORS,
+			CONTAINER_COLOR_MISSING,
+			CONTAINER_COLOR_WRONG,
+			CONTAINER_COLOR_MISMATCHED,
+			CONTAINER_COLOR_EXTRA,
 			REFRESH_MATERIAL_LIST,
 			EASY_PLACE_FULL_BLOCKS,
 			VERIFY_ITEM_COMPONENTS,
